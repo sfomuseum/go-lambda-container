@@ -10,3 +10,6 @@ lambda:
 
 docker:
 	docker build -f Dockerfile -t hello-world .
+
+local:
+	docker run -e SFOMUSEUM_MODE=lambda -p 9000:8080 hello-world:latest /main

@@ -17,7 +17,7 @@ $> make cli
 go build -mod vendor -o bin/hello-world cmd/hello-world/main.go
 
 $> ./bin/hello-world 
-Hello world
+Hello world, 2021-03-03 15:55:47.84364 -0800 PST m=+0.128271453
 ```
 
 ## Lambda
