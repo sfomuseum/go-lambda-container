@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"log"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/sfomuseum/go-flags/flagset"	
+	"github.com/sfomuseum/go-flags/flagset"
+	"time"
 )
 
-func HelloWorld(ctx context.Context) error {
-	fmt.Println("Hello world")
-	return nil
+func HelloWorld(ctx context.Context) (string, error) {
+	str := fmt.Sprintf("Hello world, %v", time.Now())
+	return str, nil
 }
 
 func main() {
@@ -31,7 +32,15 @@ func main() {
 
 	switch *mode {
 	case "cli":
-		HelloWorld(ctx)
+		
+		str, err := HelloWorld(ctx)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		fmt.Println(str)
+		
 	case "lambda":
 		lambda.Start(HelloWorld)
 	default:

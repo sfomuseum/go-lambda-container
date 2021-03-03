@@ -72,3 +72,16 @@ Ensure the following environment variables are assigned:
 | SFOMUSEUM_MODE | lambda |
 
 Create an empty test (`{}`) and run it. It should succeed with a `null` output, writing the phrase "Hello world" to the function's log file.
+
+To test locally you can do:
+
+```
+$> docker run -e SFOMUSEUM_MODE=lambda -p 9000:8080 hello-world:latest /main
+```
+
+And then in another terminal:
+
+```
+$> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
+"Hello world, 2021-03-03 23:39:42.2782989 +0000 UTC m=+0.007045701"
+```
