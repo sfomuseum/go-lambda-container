@@ -1,6 +1,6 @@
 # go-lambda-container
 
-Example code for developing Go applications that can be run from the command line, as AWS Lambda functions and containerized Lambda functions.
+Example code for developing Go applications that can be run from the command line, as AWS Lambda functions or as containerized Lambda functions.
 
 ## Important
 
