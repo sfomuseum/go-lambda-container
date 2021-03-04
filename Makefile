@@ -11,5 +11,11 @@ lambda:
 docker:
 	docker build -f Dockerfile -t hello-world .
 
+docker-readfile:
+	docker build -f Dockerfile.readfile -t read-file .
+
 local:
 	docker run -e SFOMUSEUM_MODE=lambda -p 9000:8080 hello-world:latest /main
+
+local-readfile:
+	docker run -e SFOMUSEUM_MODE=lambda -p 9000:8080 read-file:latest /main

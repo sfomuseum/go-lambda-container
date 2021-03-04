@@ -10,7 +10,9 @@ This is work in progress. Through documentation to follow.
 
 This is an example package implementing a simple "hello world" application in the Go programming language. The idea is to outline and document the steps and patterns necessary to write a single application that can be run from the command line, as an AWS Lambda function or a containerized Lambda function. 
 
-## Command line
+## Hello World
+
+### Command line
 
 ```
 $> make cli
@@ -20,7 +22,7 @@ $> ./bin/hello-world
 Hello world, 2021-03-03 15:55:47.84364 -0800 PST m=+0.128271453
 ```
 
-## Lambda
+### Lambda
 
 ```
 $> make lambda
@@ -42,7 +44,7 @@ Ensure the following environment variables are assigned:
 
 Create an empty test (`{}`) and run it. It should succeed with a `null` output, writing the phrase "Hello world" to the function's log file.
 
-## Lambda (using a container image)
+### Lambda (using a container image)
 
 ```
 $> make docker
@@ -84,4 +86,35 @@ And then in another terminal:
 ```
 $> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{}'
 "Hello world, 2021-03-03 23:39:42.2782989 +0000 UTC m=+0.007045701"
+```
+
+## Read file
+
+...bundling files in your container that can be accessed by your Go application.
+
+```
+$> make docker-readfile
+docker build -f Dockerfile.readfile -t read-file .
+Sending build context to Docker daemon  29.68MB
+
+...Docker stuff happens...
+
+Step 5/11 : RUN mkdir /usr/local/example
+Step 6/11 : COPY README.md /usr/local/example/README.md
+
+...More Docker stuff happens...
+
+Successfully tagged read-file:latest
+```
+
+```
+$> make local-readfile
+docker run -e SFOMUSEUM_MODE=lambda -e SFOMUSEUM_BUCKET_URI=file:///usr/local/example -p 9000:8080 read-file:latest /main
+time="2021-03-04T21:48:23.104" level=info msg="exec '/main' (cwd=/go, handler=)"
+```
+
+```
+$> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"path":"README.md"}'
+
+"# go-lambda-container\n\nExample code for developing Go applications that can be run from the command line, as AWS Lambda functions or as containerized Lambda functions.\n\n## Important\n\nThis is work in progress. Through documentation to follow.\n\n## What is this?\n\nThis is an example package implementing a simple \"hello world\" application in the Go programming language. The idea is to outline and document the steps and patterns necessary to write a single application that can be run from the command line, as an AWS Lambda function or a containerized Lambda function. \n\n## Command line\n\n```\n$\u003e make cli\ngo build -mod vendor -o bin/hello-world cmd/hello-world/main.go\n\n$\u003e ./bin/hello-world \nHello world, 2021-03-03 15:55:47.84364 -0800 PST m=+0.128271453\n```\n\n## Lambda\n\n```\n$\u003e make lambda\nif test -f main; then rm -f main; fi\nif test -f hello-world.zip; then rm -f hello-world.zip; fi\nGOOS=linux go build -mod vendor -o main cmd/hello-world/main.go\nzip hello-world.zip main\n  adding: main (deflated 48%)\nrm -f main\n```\n\nCreate a new Lambda function, in AWS, using `hello-world.zip` as the source code. Ensure that the Lambda handler is configured to be `main`. The function itself does not need any special permissions to the default role, that AWS will create by default, is sufficient.\n\nEnsure the following environment variables are assigned:\n\n| Name | Value |\n| --- | --- |\n| SFOMUSEUM_MODE | lambda |\n\nCreate an empty test (`{}`) and run it. It should succeed with a `null` output, writing the phrase \"Hello world\" to the function's log file.\n\n## Lambda (using a container image)\n\n```\n$\u003e make docker\ndocker build -f Dockerfile -t hello-world .\nSending build context to Docker daemon  12.82MB\n\n...Docker stuff happens\n\nSuccessfully built 97c609afd399\nSuccessfully tagged hello-world:latest\n```\n\nTag and push the `hello-world` container image to an AWS ECS repository.\n\nCreate a new Lambda function, in AWS, using `hello-world` container image as the source code. The function itself does not need any special permissions to the default role, that AWS will create by default, is sufficient.\n\nEnsure the following container image configuration values:\n\n| Name | Value |\n| --- | --- |\n| CMD override | /main |\n\nEnsure the following environment variables are assigned:\n\n| Name | Value |\n| --- | --- |\n| SFOMUSEUM_MODE | lambda |\n\nCreate an empty test (`{}`) and run it. It should succeed with a `null` output, writing the phrase \"Hello world\" to the function's log file.\n\nTo test locally you can do:\n\n```\n$\u003e docker run -e SFOMUSEUM_MODE=lambda -p 9000:8080 hello-world:latest /main\n```\n\nAnd then in another terminal:\n\n```\n$\u003e curl -XPOST \"http://localhost:9000/2015-03-31/functions/function/invocations\" -d '{}'\n\"Hello world, 2021-03-03 23:39:42.2782989 +0000 UTC m=+0.007045701\"\n```"
 ```
