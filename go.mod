@@ -5,4 +5,5 @@ go 1.12
 require (
 	github.com/aws/aws-lambda-go v1.23.0
 	github.com/sfomuseum/go-flags v0.7.0
+	gocloud.dev v0.22.0
 )
