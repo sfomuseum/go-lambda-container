@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/sfomuseum/go-flags/flagset"
 	"log"
+	"os"
 	"time"
 )
 
@@ -18,8 +19,15 @@ func main() {
 
 	fs := flagset.NewFlagSet("sfomuseum")
 
-	mode := fs.String("mode", "cli", "...")
+	mode := fs.String("mode", "cli", "Valid modes are: cli (command line), lambda.")		
 
+	fs.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Emit the phrase 'Hello world' and the current time.\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Valid options are:\n\n")
+		fs.PrintDefaults()
+	}
+	
 	flagset.Parse(fs)
 
 	ctx := context.Background()

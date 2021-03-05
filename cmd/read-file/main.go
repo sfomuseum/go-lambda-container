@@ -9,6 +9,7 @@ import (
 	_ "gocloud.dev/blob/fileblob"
 	"io"
 	"log"
+	"os"
 )
 
 func ReadFile(ctx context.Context, bucket *blob.Bucket, path string) (string, error) {
@@ -34,9 +35,16 @@ func main() {
 
 	fs := flagset.NewFlagSet("sfomuseum")
 
-	bucket_uri := fs.String("bucket-uri", "file:///usr/local/example", "...")
-	mode := fs.String("mode", "cli", "...")
+	bucket_uri := fs.String("bucket-uri", "file:///usr/local/example", "A valid GoCloud file:// bucket URI.")
+	mode := fs.String("mode", "cli", "Valid modes are: cli (command line), lambda.")
 
+	fs.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Emit the contents of a file contained in the GoCloud -bucket-uri resource.\n")
+		fmt.Fprintf(os.Stderr, "Usage:\n\t %s [options] path/to/file\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Valid options are:\n\n")
+		fs.PrintDefaults()
+	}
+	
 	flagset.Parse(fs)
 
 	ctx := context.Background()

@@ -12,6 +12,17 @@ This is an example package implementing a simple "hello world" application in th
 
 ## Hello World
 
+```
+> ./bin/hello-world -h
+Emit the phrase 'Hello world' and the current time.
+Usage:
+	 ./bin/hello-world [options]
+Valid options are:
+
+  -mode string
+    	Valid modes are: cli (command line), lambda. (default "cli")
+```
+
 ### Command line
 
 ```
@@ -88,9 +99,44 @@ $> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations"
 "Hello world, 2021-03-03 23:39:42.2782989 +0000 UTC m=+0.007045701"
 ```
 
-## Read file
+## read-file
 
-...bundling files in your container that can be accessed by your Go application.
+The `read-file` tool demonstrates bundling files in your container that can be accessed by your Go application. The code uses the [GoCloud blob.Bucket](https://gocloud.dev/howto/blob/) abstraction layer for reading files, in particular the [local storage driver](https://gocloud.dev/howto/blob/#local) for access files on the local filesystem.
+
+```
+$> ./bin/hello-world -h
+Emit the phrase 'Hello world' and the current time.
+Usage:
+	 ./bin/hello-world [options]
+Valid options are:
+
+  -mode string
+    	Valid modes are: cli (command line), lambda. (default "cli")
+```
+
+### Command line
+
+```
+$> make cli
+go build -mod vendor -o bin/read-file cmd/read-file/main.go
+```
+
+```
+$> ./bin/read-file \
+	-bucket-uri file:///usr/local/sfomuseum/go-lambda-container/ \
+	README.md \
+| wc -l
+
+     155
+```
+
+### Lambda
+
+As written this code will not work in a traditional Lambda function because there is no filesystem to read files from.
+
+_Note: Because the code is using the [GoCloud blob.Bucket](https://gocloud.dev/howto/blob/) abstraction layer for reading files it could be made to work from another storage system like S3. You will need to update the code to load the necessary packages in order for that to work._
+
+### Lambda (using a container image)
 
 ```
 $> make docker-readfile
@@ -107,11 +153,41 @@ Step 6/11 : COPY README.md /usr/local/example/README.md
 Successfully tagged read-file:latest
 ```
 
+Tag and push the `read-file` container image to an AWS ECS repository.
+
+Create a new Lambda function, in AWS, using `read-file` container image as the source code. The function itself does not need any special permissions to the default role, that AWS will create by default, is sufficient.
+
+Ensure the following container image configuration values:
+
+| Name | Value |
+| --- | --- |
+| CMD override | /main |
+
+Ensure the following environment variables are assigned:
+
+| Name | Value |
+| --- | --- |
+| SFOMUSEUM_MODE | lambda |
+| SFOMUSEUM_BUCKET_URI | file:///usr/local/example/ |
+
+Create a new test like this:
+
 ```
-$> make local-readfile
-docker run -e SFOMUSEUM_MODE=lambda -e SFOMUSEUM_BUCKET_URI=file:///usr/local/example -p 9000:8080 read-file:latest /main
+{"path":"README.md"}
+```
+
+Then run it. You should see something like this:
+
+![](docs/images/read-file-lambda-container-output.png)
+
+For testing locally you can do this:
+
+```
+$> docker run -e SFOMUSEUM_MODE=lambda -e SFOMUSEUM_BUCKET_URI=file:///usr/local/example -p 9000:8080 read-file:latest /main
 time="2021-03-04T21:48:23.104" level=info msg="exec '/main' (cwd=/go, handler=)"
 ```
+
+And then this:
 
 ```
 $> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations" -d '{"path":"README.md"}'
