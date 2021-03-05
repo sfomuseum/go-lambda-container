@@ -10,7 +10,9 @@ This is work in progress. Through documentation to follow.
 
 This is an example package implementing a simple "hello world" application in the Go programming language. The idea is to outline and document the steps and patterns necessary to write a single application that can be run from the command line, as an AWS Lambda function or a containerized Lambda function. 
 
-## Hello World
+## hello-world
+
+The `hello-world` tool emits the phrase "Hello world" and the current time.
 
 ```
 > ./bin/hello-world -h
