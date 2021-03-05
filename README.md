@@ -140,6 +140,8 @@ _Note: Because the code is using the [GoCloud blob.Bucket](https://gocloud.dev/h
 
 ### Lambda (using a container image)
 
+First, start by creating a container using the `Dockerfile.readfile` instructions.
+
 ```
 $> make docker-readfile
 docker build -f Dockerfile.readfile -t read-file .
@@ -154,6 +156,8 @@ Step 6/11 : COPY README.md /usr/local/example/README.md
 
 Successfully tagged read-file:latest
 ```
+
+_See the way we're creating a `/usr/local/example` directory in the container and copying the `README.md` file in to it? This is the file we will read later in our Lambda function._
 
 Tag and push the `read-file` container image to an AWS ECS repository.
 
