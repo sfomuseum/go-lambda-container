@@ -106,12 +106,14 @@ $> curl -XPOST "http://localhost:9000/2015-03-31/functions/function/invocations"
 The `read-file` tool demonstrates bundling files in your container that can be accessed by your Go application. The code uses the [GoCloud blob.Bucket](https://gocloud.dev/howto/blob/) abstraction layer for reading files, in particular the [local storage driver](https://gocloud.dev/howto/blob/#local) for access files on the local filesystem.
 
 ```
-$> ./bin/hello-world -h
-Emit the phrase 'Hello world' and the current time.
+$> ./bin/read-file -h
+Emit the contents of a file contained in the GoCloud -bucket-uri resource.
 Usage:
-	 ./bin/hello-world [options]
+	 ./bin/read-file [options] path/to/file
 Valid options are:
 
+  -bucket-uri string
+    	A valid GoCloud file:// bucket URI. (default "file:///usr/local/example")
   -mode string
     	Valid modes are: cli (command line), lambda. (default "cli")
 ```
