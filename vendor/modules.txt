@@ -1,4 +1,9 @@
+# github.com/aaronland/go-http-server v0.0.5
+github.com/aaronland/go-http-server
+# github.com/aaronland/go-roster v0.0.2
+github.com/aaronland/go-roster
 # github.com/aws/aws-lambda-go v1.23.0
+github.com/aws/aws-lambda-go/events
 github.com/aws/aws-lambda-go/lambda
 github.com/aws/aws-lambda-go/lambda/handlertrace
 github.com/aws/aws-lambda-go/lambda/messages
@@ -15,6 +20,8 @@ github.com/golang/protobuf/ptypes/timestamp
 github.com/googleapis/gax-go/v2
 # github.com/sfomuseum/go-flags v0.7.0
 github.com/sfomuseum/go-flags/flagset
+# github.com/whosonfirst/algnhsa v0.1.0
+github.com/whosonfirst/algnhsa
 # go.opencensus.io v0.22.5
 go.opencensus.io
 go.opencensus.io/internal

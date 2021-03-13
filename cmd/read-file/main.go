@@ -44,7 +44,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Valid options are:\n\n")
 		fs.PrintDefaults()
 	}
-	
+
 	flagset.Parse(fs)
 
 	ctx := context.Background()

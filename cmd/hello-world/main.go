@@ -19,7 +19,7 @@ func main() {
 
 	fs := flagset.NewFlagSet("sfomuseum")
 
-	mode := fs.String("mode", "cli", "Valid modes are: cli (command line), lambda.")		
+	mode := fs.String("mode", "cli", "Valid modes are: cli (command line), lambda.")
 
 	fs.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Emit the phrase 'Hello world' and the current time.\n")
@@ -27,7 +27,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Valid options are:\n\n")
 		fs.PrintDefaults()
 	}
-	
+
 	flagset.Parse(fs)
 
 	ctx := context.Background()
